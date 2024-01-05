@@ -147,9 +147,7 @@ button {
   position: relative;
   overflow-y: hidden;
 
-  --default-transitions: transform 0.5s, border-radius 0.5s;
-
-  transition: --default-transitions;
+  transition: transform 0.5s, border-radius 0.5s;
   transform: translateY(0);
 
   max-height: 100vh;
@@ -163,7 +161,7 @@ button {
 }
 
 #sheet .contents:not(.not-selectable) {
-  transition: --default-transitions, height 0.5s;
+  transition: transform 0.5s, border-radius 0.5s, height 0.5s;
 }
 
 #sheet .contents.fullscreen {
