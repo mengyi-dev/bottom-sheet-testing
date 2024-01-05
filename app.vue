@@ -11,6 +11,7 @@ export default {
   mounted() {
     const $ = document.querySelector.bind(document)
     this.sheetContents = $('#sheet .contents')
+    console.log(this.dragPosition)
 
     window.addEventListener('mousemove', this.onDragMove)
     window.addEventListener('touchmove', this.onDragMove)
@@ -29,19 +30,23 @@ export default {
         this.sheetContents.classList.remove('fullscreen')
       }
     },
+    touchPosition(event) {
+      return event.touches ? event.touches[0] : event
+    },
     setIsSheetShown(value) {
       this.isSheetShown = value
     },
     onDragStart(event) {
-      this.dragPosition = event.touches ? event.touches[0].pageY : event.pageY
+      this.dragPosition = this.touchPosition(event).pageY
       this.sheetContents.classList.add('not-selectable')
       document.body.style.cursor = 'grabbing'
       document.body.style.overflow = 'hidden'
     },
     onDragMove(event) {
-      if (this.dragPosition === undefined) return
+      console.log('ddddd')
+      //   if (this.dragPosition === undefined) return
 
-      const y = event.touches ? event.touches[0].pageY : event.pageY
+      const y = this.touchPosition(event).pageY
       const deltaY = this.dragPosition - y
       const deltaHeight = (deltaY / window.innerHeight) * 100
 
@@ -70,9 +75,9 @@ export default {
     <button id="open-sheet" type="button" aria-controls="sheet" @click="setIsSheetShown(true)">Open Sheet</button>
 
     <div id="sheet" class="column items-center justify-end" :aria-hidden="!isSheetShown">
-      <div class="overlay"></div>
+      <div class="overlay" @click="setIsSheetShown(false)"></div>
 
-      <div class="contents column" style="background: #ffff; box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px">
+      <div class="contents column" style="background: #ffff; box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px; width: 100%">
         <header class="controls">
           <div class="draggable-area" @mousedown="onDragStart" @touchstart="onDragStart">
             <div class="draggable-thumb"></div>
@@ -80,8 +85,7 @@ export default {
         </header>
 
         <main class="body fill column">
-          <h2>Hello, World!</h2>
-          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. ...</p>
+          <slot></slot>
         </main>
       </div>
     </div>
