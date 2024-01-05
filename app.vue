@@ -123,7 +123,7 @@ button {
   bottom: 0;
   z-index: 2;
   visibility: visible;
-  transition: opacity 0.5s, visibility 0.5s;
+  transition: opacity 0.3s, visibility 0.3s;
 }
 
 #sheet[aria-hidden='true'] {
@@ -151,7 +151,7 @@ button {
   position: relative;
   overflow-y: hidden;
 
-  transition: transform 0.5s, border-radius 0.5s;
+  transition: transform 0.3s, border-radius 0.3s;
   transform: translateY(0);
 
   max-height: 100vh;
@@ -165,7 +165,7 @@ button {
 }
 
 #sheet .contents:not(.not-selectable) {
-  transition: transform 0.5s, border-radius 0.5s, height 0.5s;
+  transition: transform 0.3s, border-radius 0.3s, height 0.3s;
 }
 
 #sheet .contents.fullscreen {
