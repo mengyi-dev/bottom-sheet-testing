@@ -1,5 +1,8 @@
 <script>
 export default {
+  props: {
+    open: { type: Boolean, default: true },
+  },
   data() {
     return {
       sheetHeight: 0, // in vh
@@ -7,6 +10,14 @@ export default {
       dragPosition: undefined,
       sheetContents: undefined,
     }
+  },
+  watch: {
+    open: {
+      immediate: true,
+      handler(val) {
+        this.setIsSheetShown(val)
+      },
+    },
   },
   mounted() {
     const $ = document.querySelector.bind(document)
@@ -35,6 +46,7 @@ export default {
     },
     setIsSheetShown(value) {
       this.isSheetShown = value
+      //   this.$emit('close')
     },
     onDragStart(event) {
       this.dragPosition = this.touchPosition(event).pageY
@@ -43,9 +55,6 @@ export default {
       document.body.style.overflow = 'hidden'
     },
     onDragMove(event) {
-      console.log('ddddd')
-      //   if (this.dragPosition === undefined) return
-
       const y = this.touchPosition(event).pageY
       const deltaY = this.dragPosition - y
       const deltaHeight = (deltaY / window.innerHeight) * 100
@@ -57,14 +66,19 @@ export default {
       this.dragPosition = undefined
       this.sheetContents.classList.remove('not-selectable')
       document.body.style.cursor = ''
+      document.body.style.overflow = ''
 
       if (this.sheetHeight < 25) {
-        this.setIsSheetShown(false)
+        this.handleClose()
       } else if (this.sheetHeight > 75) {
         this.setSheetHeight(100)
       } else {
         this.setSheetHeight(50)
       }
+    },
+    handleClose() {
+      this.$emit('close')
+      this.setIsSheetShown(false)
     },
   },
 }
@@ -72,10 +86,8 @@ export default {
 
 <template>
   <div>
-    <button id="open-sheet" type="button" aria-controls="sheet" @click="setIsSheetShown(true)">Open Sheet</button>
-
     <div id="sheet" class="column items-center justify-end" :aria-hidden="!isSheetShown">
-      <div class="overlay" @click="setIsSheetShown(false)"></div>
+      <div class="overlay" @click="handleClose"></div>
 
       <div class="contents column" style="background: #ffff; box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px; width: 100%">
         <header class="controls">
@@ -123,7 +135,7 @@ button {
   bottom: 0;
   z-index: 2;
   visibility: visible;
-  transition: opacity 0.3s, visibility 0.3s;
+  transition: opacity 0.5s, visibility 0.5s;
 }
 
 #sheet[aria-hidden='true'] {
@@ -139,19 +151,19 @@ button {
   right: 0;
   bottom: 0;
   z-index: -1;
-  background: #888;
+  background: rgba(0, 0, 0, 0.5);
   opacity: 0.5;
 }
 
 #sheet .contents {
-  border-radius: 1rem 1rem 0 0;
+  border-radius: 16px 16px 0 0;
 
   background: #fff;
 
   position: relative;
   overflow-y: hidden;
 
-  transition: transform 0.3s, border-radius 0.3s;
+  transition: transform 0.5s, border-radius 0.5s;
   transform: translateY(0);
 
   max-height: 100vh;
@@ -165,7 +177,7 @@ button {
 }
 
 #sheet .contents:not(.not-selectable) {
-  transition: transform 0.3s, border-radius 0.3s, height 0.3s;
+  transition: transform 0.5s, border-radius 0.5s, height 0.5s;
 }
 
 #sheet .contents.fullscreen {
@@ -183,15 +195,16 @@ button {
   right: 0;
   width: 3rem;
   margin: auto;
-  padding: 1rem;
+  padding: 12px;
   cursor: grab;
 }
 
 #sheet .draggable-thumb {
-  width: inherit;
-  height: 0.25rem;
+  width: 34px;
+  height: 2px;
   background: #dcdcdc;
   border-radius: 0.125rem;
+  margin: 0 auto;
 }
 
 #sheet .close-sheet {
@@ -207,14 +220,6 @@ button {
   gap: 1rem;
 }
 
-.row {
-  display: flex;
-  flex-direction: row;
-}
-.row.reversed-order {
-  flex-direction: row-reverse;
-}
-
 .column {
   display: flex;
   flex-direction: column;
@@ -223,75 +228,60 @@ button {
   flex-direction: column-reverse;
 }
 
-.row.items-start,
 .column.items-start {
   align-items: flex-start;
 }
-.row.justify-start,
+
 .column.justify-start {
   justify-content: flex-start;
 }
-.row.content-start,
+
 .column.content-start {
   align-content: flex-start;
 }
-.row.items-center,
+
 .column.items-center {
   align-items: center;
 }
-.row.justify-center,
 .column.justify-center {
   justify-content: center;
 }
-.row.content-center,
 .column.content-center {
   align-content: center;
 }
-.row.items-end,
 .column.items-end {
   align-items: flex-end;
 }
-.row.justify-end,
 .column.justify-end {
   justify-content: flex-end;
 }
-.row.content-end,
 .column.content-end {
   align-content: flex-end;
 }
-.row.items-stretch,
 .column.items-stretch {
   align-items: stretch;
 }
-.row.justify-stretch,
 .column.justify-stretch {
   justify-content: stretch;
 }
-.row.content-stretch,
 .column.content-stretch {
   align-content: stretch;
 }
-.row.items-baseline,
 .column.items-baseline {
   align-items: baseline;
 }
-.row.justify-baseline,
 .column.justify-baseline {
   justify-content: baseline;
 }
-.row.content-baseline,
 .column.content-baseline {
   align-content: baseline;
 }
-.row .wrap,
 .column .wrap {
   flex-wrap: wrap;
 }
-.row .reversed-wrap,
 .column .reversed-wrap {
   flex-wrap: wrap-reverse;
 }
-.row .no-wrap,
 .column .no-wrap {
   flex-wrap: nowrap;
 }
